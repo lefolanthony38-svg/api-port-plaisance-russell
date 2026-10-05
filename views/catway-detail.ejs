@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+
+<main class="container">
+  <%- include('partials/nav') %>
+
+  <h1>Catway n°<%= catway.catwayNumber %></h1>
+  <p><a href="/catways-view">← Retour à la liste des catways</a></p>
+
+  <ul>
+    <li>Numéro : <%= catway.catwayNumber %></li>
+    <li>Type : <%= catway.catwayType %></li>
+    <li>État : <%= catway.catwayState %></li>
+  </ul>
+
+  <h2>Réservations de ce catway</h2>
+  <% if (reservations.length === 0) { %>
+    <p>Aucune réservation pour ce catway.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Début</th>
+          <th>Fin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% reservations.forEach(function(reservation) { %>
+          <tr>
+            <td><%= reservation.clientName %></td>
+            <td><%= reservation.boatName %></td>
+            <td><%= new Date(reservation.startDate).toLocaleDateString('fr-FR') %></td>
+            <td><%= new Date(reservation.endDate).toLocaleDateString('fr-FR') %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+</main>
+
+<%- include('partials/footer') %>

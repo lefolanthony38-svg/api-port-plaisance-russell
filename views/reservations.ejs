@@ -1,0 +1,67 @@
+<%- include('partials/header') %>
+
+<main class="container">
+  <%- include('partials/nav') %>
+
+  <h1>Réservations</h1>
+
+  <h2>Ajouter une réservation</h2>
+  <form id="create-form">
+    <label for="catwayNumber">Catway</label>
+    <select id="catwayNumber" required>
+      <% catways.forEach(function(catway) { %>
+        <option value="<%= catway.catwayNumber %>">
+          Catway <%= catway.catwayNumber %> (<%= catway.catwayType %>)
+        </option>
+      <% }); %>
+    </select>
+
+    <label for="clientName">Nom du client</label>
+    <input type="text" id="clientName" required>
+
+    <label for="boatName">Nom du bateau</label>
+    <input type="text" id="boatName" required>
+
+    <label for="startDate">Date de début</label>
+    <input type="date" id="startDate" required>
+
+    <label for="endDate">Date de fin</label>
+    <input type="date" id="endDate" required>
+
+    <button type="submit">Créer</button>
+  </form>
+
+  <p id="message" class="error"></p>
+
+  <h2>Liste des réservations</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Catway</th>
+        <th>Client</th>
+        <th>Bateau</th>
+        <th>Début</th>
+        <th>Fin</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% reservations.forEach(function(reservation) { %>
+        <tr data-id="<%= reservation._id %>" data-catway="<%= reservation.catwayNumber %>">
+          <td><%= reservation.catwayNumber %></td>
+          <td><input type="text" class="f-client" value="<%= reservation.clientName %>"></td>
+          <td><input type="text" class="f-boat" value="<%= reservation.boatName %>"></td>
+          <td><input type="date" class="f-start" value="<%= reservation.startDate.toISOString().slice(0, 10) %>"></td>
+          <td><input type="date" class="f-end" value="<%= reservation.endDate.toISOString().slice(0, 10) %>"></td>
+          <td>
+            <button class="btn-update">Modifier</button>
+            <button class="btn-delete">Supprimer</button>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</main>
+
+<script src="/js/reservations.js"></script>
+<%- include('partials/footer') %>

@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+
+<main class="container">
+  <%- include('partials/nav') %>
+
+  <h1>Utilisateur : <%= user.username %></h1>
+  <p><a href="/users-view">← Retour à la liste des utilisateurs</a></p>
+
+  <ul>
+    <li>Nom d'utilisateur : <%= user.username %></li>
+    <li>Email : <%= user.email %></li>
+  </ul>
+</main>
+
+<%- include('partials/footer') %>

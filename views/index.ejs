@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+
+<main class="container">
+  <h1>Port de Plaisance Russell</h1>
+  <p>
+    Bienvenue sur l'application de gestion des réservations de catways
+    du port de plaisance Russell. Cette plateforme permet à la capitainerie
+    de gérer les emplacements d'amarrage et les réservations des plaisanciers.
+  </p>
+
+  <section class="login-section">
+    <h2>Connexion</h2>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+    <form action="/login" method="POST">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="password">Mot de passe</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Se connecter</button>
+    </form>
+  </section>
+
+  <p><a href="/api-docs">Voir la documentation de l'API</a></p>
+</main>
+
+<%- include('partials/footer') %>

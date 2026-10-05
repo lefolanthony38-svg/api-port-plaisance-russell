@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+
+<main class="container">
+  <%- include('partials/nav') %>
+
+  <h1>Tableau de bord</h1>
+  <p>Connecté en tant que <strong><%= user.username %></strong> (<%= user.email %>)</p>
+  <p>Date du jour : <%= new Date().toLocaleDateString('fr-FR') %></p>
+
+  <h2>Réservations en cours</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Catway</th>
+        <th>Client</th>
+        <th>Bateau</th>
+        <th>Début</th>
+        <th>Fin</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% reservations.forEach(function(reservation) { %>
+        <tr>
+          <td><%= reservation.catwayNumber %></td>
+          <td><%= reservation.clientName %></td>
+          <td><%= reservation.boatName %></td>
+          <td><%= new Date(reservation.startDate).toLocaleDateString('fr-FR') %></td>
+          <td><%= new Date(reservation.endDate).toLocaleDateString('fr-FR') %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</main>
+
+<%- include('partials/footer') %>

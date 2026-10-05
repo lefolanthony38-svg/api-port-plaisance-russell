@@ -76,7 +76,11 @@ exports.reservationsPage = async (req, res) => {
 exports.usersPage = async (req, res) => {
   try {
     const users = await User.find().select('-password').sort({ username: 1 });
-    res.render('users', { users, currentEmail: req.user.email });
+    res.render('users', {
+      users,
+      currentEmail: req.user.email,
+      adminEmail: (process.env.ADMIN_EMAIL || '').trim().toLowerCase(),
+    });
   } catch (err) {
     res.status(500).send('Erreur serveur');
   }

@@ -372,5 +372,23 @@ const swaggerSpec = {
     },
   },
 };
+// ---------- Compléments : règles de gestion ----------
+swaggerSpec.components.responses.Forbidden = {
+  description: 'Action interdite',
+  content: jsonContent(ref('Message')),
+};
 
+const usersByEmail = swaggerSpec.paths['/users/{email}'];
+usersByEmail.put.description =
+  "Le nom d'utilisateur et/ou le mot de passe peuvent être modifiés. L'email ne peut pas l'être. Le compte administrateur ne peut être modifié que par lui-même (403 sinon).";
+usersByEmail.put.responses[403] = { $ref: '#/components/responses/Forbidden' };
+usersByEmail.delete.description =
+  'Le compte administrateur ne peut pas être supprimé (403).';
+usersByEmail.delete.responses[403] = { $ref: '#/components/responses/Forbidden' };
+
+swaggerSpec.paths['/catways/{id}/reservations'].post.description =
+  "La date de fin ne peut pas être antérieure à la date de début, et la période ne doit pas chevaucher une autre réservation du même catway (400 sinon).";
+swaggerSpec.paths['/catways/{id}/reservations/{idReservation}'].put.description =
+  "Mêmes règles qu'à la création : dates cohérentes et pas de chevauchement avec une autre réservation du même catway (400 sinon).";
+  
 module.exports = swaggerSpec;

@@ -38,13 +38,14 @@
           <td>
             <a href="/users-view/<%= encodeURIComponent(user.email) %>"><%= user.email %></a>
             <% if (user.email === currentEmail) { %> (vous)<% } %>
+            <% if (user.email === adminEmail) { %> (administrateur)<% } %>
           </td>
           <td>
             <input type="password" class="f-password" placeholder="Laisser vide pour ne pas changer" autocomplete="new-password">
           </td>
           <td>
             <button class="btn-update">Modifier</button>
-            <% if (user.email !== currentEmail) { %>
+            <% if (user.email !== currentEmail && user.email !== adminEmail) { %>
               <button class="btn-delete">Supprimer</button>
             <% } %>
           </td>

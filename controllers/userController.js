@@ -1,9 +1,22 @@
 /**
  * @fileoverview Contrôleur de l'API REST des utilisateurs (opérations CRUD).
  * Le mot de passe n'est jamais renvoyé dans les réponses.
+ * Le compte administrateur (variable d'environnement ADMIN_EMAIL) ne peut pas
+ * être supprimé, et seul lui peut modifier son propre compte.
  * @module controllers/userController
  */
 const User = require('../models/User');
+
+/**
+ * Indique si l'adresse donnée est celle du compte administrateur.
+ * Retourne toujours false si la variable ADMIN_EMAIL n'est pas définie.
+ * @param {string} email - Adresse email à tester.
+ * @returns {boolean} true s'il s'agit du compte administrateur.
+ */
+const isAdminEmail = (email) => {
+  const adminEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+  return adminEmail !== '' && String(email).trim().toLowerCase() === adminEmail;
+};
 
 /**
  * Liste tous les utilisateurs.
@@ -69,15 +82,22 @@ exports.createUser = async (req, res) => {
 
 /**
  * Modifie le nom d'utilisateur et/ou le mot de passe d'un utilisateur.
- * L'email n'est pas modifiable.
+ * L'email n'est pas modifiable. Le compte administrateur ne peut être modifié
+ * que par lui-même (403 sinon).
  * Route : PUT /users/:email
  * @async
- * @param {import('express').Request} req - Requête Express (req.params.email : email de l'utilisateur, req.body : username et/ou password).
- * @param {import('express').Response} res - Réponse Express (200 avec le nom et l'email, 400 ou 404 en cas d'erreur).
+ * @param {import('express').Request} req - Requête Express (req.params.email : email de l'utilisateur, req.body : username et/ou password, req.user : utilisateur connecté).
+ * @param {import('express').Response} res - Réponse Express (200 avec le nom et l'email, 400, 403 ou 404 en cas d'erreur).
  * @returns {Promise<void>}
  */
 exports.updateUser = async (req, res) => {
   try {
+    if (isAdminEmail(req.params.email) && !isAdminEmail(req.user.email)) {
+      return res.status(403).json({
+        message: 'Seul le compte administrateur peut modifier son propre compte',
+      });
+    }
+
     const updates = {};
     if (req.body.username) updates.username = req.body.username;
     if (req.body.password) updates.password = req.body.password;
@@ -97,15 +117,21 @@ exports.updateUser = async (req, res) => {
 };
 
 /**
- * Supprime un utilisateur.
+ * Supprime un utilisateur. Le compte administrateur ne peut pas être supprimé (403).
  * Route : DELETE /users/:email
  * @async
  * @param {import('express').Request} req - Requête Express (req.params.email : email de l'utilisateur).
- * @param {import('express').Response} res - Réponse Express (200 avec un message, 404 si l'utilisateur n'existe pas).
+ * @param {import('express').Response} res - Réponse Express (200 avec un message, 403 pour le compte administrateur, 404 si l'utilisateur n'existe pas).
  * @returns {Promise<void>}
  */
 exports.deleteUser = async (req, res) => {
   try {
+    if (isAdminEmail(req.params.email)) {
+      return res.status(403).json({
+        message: 'Le compte administrateur ne peut pas être supprimé',
+      });
+    }
+
     const user = await User.findOneAndDelete({ email: req.params.email });
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
